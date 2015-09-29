@@ -24,7 +24,7 @@ public class PageAvg {
             String actUrl = "";
             ArrayList<Integer> arrayList = new ArrayList<>();
             int counter = 1;
-            while ((thisLine = br.readLine()) != null) { // while loop begins her
+            while ((thisLine = br.readLine()) != null) {
                 String thisUrl = thisLine.split("> <")[0];
 
                 if(thisUrl.equals(actUrl)){
@@ -36,11 +36,11 @@ public class PageAvg {
                 }
 
 
-            } // end while
+            }
 
             System.out.println("AVG:" + avg(arrayList));
             System.out.println("STD: " + std(arrayList));
-        } // end try
+        }
 
         catch (IOException e) {
             System.err.println("Error: " + e);
