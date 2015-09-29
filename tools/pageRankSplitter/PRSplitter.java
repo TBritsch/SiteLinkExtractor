@@ -45,14 +45,14 @@ public class PRSplitter {
             BufferedReader br = new BufferedReader(
                     new InputStreamReader(
                             new FileInputStream(filename)));
-            while ((thisLine = br.readLine()) != null) { // while loop begins here
+            while ((thisLine = br.readLine()) != null) {
                 String[] splitted = thisLine.split(" ");
                 if (splitted[splitted.length - 2].contains(pattern)) {
                     elements.add(new Result(splitted[0]));
                 }
 
-            } // end while
-        } // end try
+            }
+        }
         catch (IOException e) {
             System.err.println("Error: " + e);
         }
@@ -68,7 +68,7 @@ public class PRSplitter {
             BufferedReader br = new BufferedReader(
                     new InputStreamReader(
                             new FileInputStream(filename)));
-            while ((thisLine = br.readLine()) != null) { // while loop begins here
+            while ((thisLine = br.readLine()) != null) {
 
                 for (Result element : elements) {
                     if (thisLine.contains("/resource/" + element.getName() + "\t")) {
@@ -77,8 +77,8 @@ public class PRSplitter {
 
                     }
                 }
-            } // end while
-        } // end try
+            }
+        }
         catch (IOException e) {
             System.err.println("Error: " + e);
         }
