@@ -4,7 +4,7 @@ import java.io.*;
 import java.util.HashSet;
 
 /**
- * Created by Thimo on 31.08.2015.
+ * Created by T. Britsch on 31.08.2015.
  */
 public class Diff {
 

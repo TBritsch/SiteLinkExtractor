@@ -4,7 +4,7 @@ import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 /**
- * Created by Thimo on 10.08.2015.
+ * Created by T. Britsch on 10.08.2015.
  */
 public class TokenList {
 

@@ -22,7 +22,7 @@ import java.io.StringReader;
 
 /**
  * Bearbeitet einen einzelnen Wikipedia-Artikel und erstellt ein Article-Object davon.
- * Created by Thimo on 02.07.2015.
+ * Created by T. Britsch on 02.07.2015.
  */
 public class XMLParser {
     Article article = null;

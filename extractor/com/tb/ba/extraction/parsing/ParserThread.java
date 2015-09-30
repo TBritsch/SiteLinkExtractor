@@ -12,7 +12,7 @@ import java.util.List;
 /**
  * Diese Klasse behandelt die zu verarbeitenden Artikel aus der Queue Extractor.parseQueue, indem sie die
  * verschiedenen Extraktoren aufruft und ihr den Artikel übergibt.
- * Created by Thimo on 02.07.2015.
+ * Created by T. Britsch on 02.07.2015.
  */
 public class ParserThread implements Runnable{
 
