@@ -1,16 +1,93 @@
 package com.tb.ba.extraction.filter;
 
+import com.sun.xml.internal.ws.util.StringUtils;
 import com.tb.ba.extraction.Extractor;
+import com.tb.ba.scala.TurtleEscaper;
+import com.tb.ba.scala.UriDecoder;
+import com.tb.ba.scala.WikiUtil;
 
 import java.util.HashMap;
+import java.util.regex.Pattern;
 
 /**
  * Created by T. Britsch on 19.08.2015.
  */
 public class Filter {
 
-    public static HashMap<String, String> translateFiles = new HashMap<>();
+    public static HashMap<String, String[]> translateFiles = new HashMap<>();
     public static HashMap<String, String> translateCategories = new HashMap<>();
+
+
+    /**
+     * Erstellt eine valide URL ausgehend vom Input.
+     *
+     * @param raw Der zu verarbeitende Link
+     * @return Entity-Name
+     */
+    public static String buildEntityName(String raw) {
+
+        StringBuffer rawbuf = new StringBuffer(raw);
+        rawbuf.setCharAt(0, Character.toUpperCase(rawbuf.charAt(0)));
+        raw = rawbuf.toString();
+
+
+        if (raw.contains("#")) {
+            raw = raw.substring(0, raw.indexOf('#'));
+        }
+
+        if (raw.length() > 1) {
+            if (raw.charAt(0) == ':') {
+                raw = (raw.substring(1, raw.length()));
+            }
+        }
+
+
+        //raw = raw.replace(translateCategorie(Extractor.config_language) + ": ", translateCategorie(Extractor
+        //        .config_language) + ":");
+
+        raw = replaceInsensitive(raw, translateCategorie(Extractor.config_language) + ": ", translateCategorie
+                (Extractor.config_language) + ":");
+
+
+        raw = replaceInsensitive(raw, translateCategorie(Extractor.config_language), translateCategorie(Extractor
+                .config_language));
+
+
+        for (String prefix : getTranslatedFileNames()) {
+            raw = raw.replace(prefix + ": ", prefix + ":");
+        }
+
+        //raw = raw.replaceAll(": ", ":");
+
+        raw = UriDecoder.decode(raw);
+        raw = WikiUtil.cleanSpace(raw);
+        raw = WikiUtil.wikiEncode(raw);
+
+        StringBuilder stringBuilder = new StringBuilder();
+        TurtleEscaper turtleEscaper = new TurtleEscaper(stringBuilder, false);
+        turtleEscaper.escapeTurtle(raw);
+
+        raw = stringBuilder.toString();
+
+
+        raw = raw.replace("\\\\", "\\");
+        raw = raw.replace(" ", "_");
+        raw = raw.replace("&nbsp;", "_");
+        raw = raw.replace("  ", "_");
+        raw = raw.replace("&amp;", "&");
+        raw = raw.replace("%5B", "");
+
+
+        raw = raw.trim();
+        raw = StringUtils.capitalize(raw);
+
+
+        return raw;
+    }
+
+    private static String replaceInsensitive(String string, String search, String replace) {
+        return string.replaceAll("(?i)" + search, replace);
+    }
 
 
     /**
@@ -22,12 +99,46 @@ public class Filter {
      * @return Ja/Nein, ob es sich um eine erlaubte Verbindung handelt.
      */
     public static boolean isAllowedEntitiyName(String from, String to) {
+        boolean allowed = true;
 
         if (from.toLowerCase().contains(translateCategorie(Extractor.config_language).toLowerCase() + ":")) {
-            return false;
-        } else {
-            return true;
+            allowed = false;
         }
+
+        if (to.equals("")) {
+            allowed = false;
+        }
+
+        if (isFile(from) || isFile(to)) {
+            allowed = false;
+        }
+
+        if (from.toLowerCase().contains("commons:") || to.toLowerCase().contains("commons:")) {
+            allowed = false;
+        }
+
+        //Simple English
+        if (from.toLowerCase().contains("simple:") || to.toLowerCase().contains("simple:")) {
+            allowed = false;
+        }
+
+        //raw = raw.replaceAll(":[a-zA-Z]{1,3}:", "");
+
+        //Links auf anderssprachige Wikis unterbinden
+        if (Pattern.matches("[a-zA-Z]{2,3}:.*?", from) || Pattern.matches("[a-zA-Z]{2,3}:.*?", to)) {
+
+            //eigene Sprache erlauben
+            if (!from.substring(0, Extractor.config_language.length()).toLowerCase().equals(Extractor.config_language
+                    .toLowerCase())
+                    || !to.substring
+                    (0, Extractor.config_language.length()).toLowerCase().equals(Extractor.config_language
+                    .toLowerCase())) {
+                allowed = false;
+
+            }
+        }
+
+        return allowed;
 
     }
 
@@ -62,13 +173,25 @@ public class Filter {
      * @return Ja/Nein, ob es sich um Datei handelt.
      */
     public static boolean isFile(String path) {
-        if (path.contains(getTranslatedFileName() + ":")) {
-            return true;
-        } else if (path.contains(getTranslatedFileName("en") + ":")) {
-            return true;
-        } else {
-            return false;
+        boolean isFile = false;
+
+        for (String prefix : getTranslatedFileNames()) {
+            if (path.toLowerCase().contains(prefix.toLowerCase() + ":")) {
+                isFile = true;
+                break;
+            }
         }
+
+        if (!isFile) {
+            for (String prefix : getTranslatedFileNames("en")) {
+                if (path.toLowerCase().contains(prefix.toLowerCase() + ":")) {
+                    isFile = true;
+                    break;
+                }
+            }
+        }
+
+        return isFile;
     }
 
 
@@ -78,8 +201,8 @@ public class Filter {
      *
      * @return String, der eine Datei identifiziert.
      */
-    public static String getTranslatedFileName() {
-        return getTranslatedFileName(Extractor.config_language);
+    public static String[] getTranslatedFileNames() {
+        return getTranslatedFileNames(Extractor.config_language);
     }
 
 
@@ -90,8 +213,8 @@ public class Filter {
      * @param lang
      * @return String, der eine Datei identifiziert.
      */
-    public static String getTranslatedFileName(String lang) {
-        String ret = translateFiles.get(lang);
+    public static String[] getTranslatedFileNames(String lang) {
+        String[] ret = translateFiles.get(lang);
         if (ret == null) {
             ret = translateFiles.get("en");
         }
@@ -104,14 +227,14 @@ public class Filter {
      * Initialisiert die Hashmaps, die für die Filter bnötigt werden.
      */
     public static void init() {
-        Filter.translateFiles.put("de", "Datei");
-        Filter.translateFiles.put("als", "Datei");
-        Filter.translateFiles.put("en", "File");
-        Filter.translateFiles.put("es", "File");
-        Filter.translateFiles.put("it", "File");
-        Filter.translateFiles.put("fr", "File");
-        Filter.translateFiles.put("ru", "File");
-        Filter.translateFiles.put("zh", "File");
+        Filter.translateFiles.put("de", new String[]{"Datei", "Bild", "Image"});
+        Filter.translateFiles.put("als", new String[]{"Datei", "Bild"});
+        Filter.translateFiles.put("en", new String[]{"File", "Image"});
+        Filter.translateFiles.put("es", new String[]{"File", "Image"});
+        Filter.translateFiles.put("it", new String[]{"File", "Image"});
+        Filter.translateFiles.put("fr", new String[]{"File", "Image"});
+        Filter.translateFiles.put("ru", new String[]{"File", "Image"});
+        Filter.translateFiles.put("zh", new String[]{"File", "Image"});
 
 
         Filter.translateCategories.put("de", "Kategorie");

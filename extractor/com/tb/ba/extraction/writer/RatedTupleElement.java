@@ -21,8 +21,8 @@ public class RatedTupleElement extends TupleElement {
      */
 
     public RatedTupleElement(String articleNameFrom, String articleNameTo, double rating) {
-        this.map.put("articleNameFrom", articleNameFrom);
-        this.map.put("articleNameTo", articleNameTo);
+        this.map.put("articleNameFrom", Filter.buildEntityName(articleNameFrom));
+        this.map.put("articleNameTo", Filter.buildEntityName(articleNameTo));
         this.map.put("rating", rating);
     }
 
@@ -34,8 +34,8 @@ public class RatedTupleElement extends TupleElement {
      * @return Der String
      */
     public String toString() {
-        if (Filter.isAllowedEntitiyName(this.map.get("articleNameFrom").toString(), encodeTitle(this.map.get
-                ("articleNameTo").toString()))) {//checking, if namespaces are ok
+        if (Filter.isAllowedEntitiyName(this.map.get("articleNameFrom").toString(), this.map.get
+                ("articleNameTo").toString())) {//checking, if namespaces are ok
             StringBuilder sB = new StringBuilder();
             sB.append("<http://");
             if (!Extractor.config_language.equals("en") && Extractor.config_language != "") {
@@ -44,14 +44,14 @@ public class RatedTupleElement extends TupleElement {
             }
             sB.append("dbpedia.org/resource/");
 
-            sB.append(encodeTitle(this.map.get("articleNameFrom").toString()));
+            sB.append(this.map.get("articleNameFrom").toString());
             sB.append("> <http://dbpedia.org/ontology/wikiPageWikiLink> <http://");
             if (!Extractor.config_language.equals("en") && Extractor.config_language != "") {
                 sB.append(Extractor.config_language);
                 sB.append(".");
             }
             sB.append("dbpedia.org/resource/");
-            sB.append(encodeTitle(this.map.get("articleNameTo").toString()));
+            sB.append(this.map.get("articleNameTo").toString());
             sB.append(">");
 
             sB.append(" <");
@@ -64,18 +64,4 @@ public class RatedTupleElement extends TupleElement {
         //return this.map.get("articleNameFrom").toString() + "\t" + this.map.get("articleNameTo").toString();
     }
 
-
-    /**
-     * Säubert einen URL-Pfad, um diesen korrekt zu speichern.
-     *
-     * @param title der zu säubernde Titel
-     * @return der gesäuberte Titel
-     */
-    private static String encodeTitle(String title) {
-        title = title.replace("\\\\", "\\");
-        title = title.replace(" ", "_");
-        title = title.replace("&nbsp;", "_");
-        title = Link.cleanURL(title);
-        return title.replace("  ", "_");
-    }
 }

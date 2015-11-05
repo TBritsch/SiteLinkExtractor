@@ -1,8 +1,5 @@
 package com.tb.ba.extraction.datastructure;
 
-import com.sun.xml.internal.ws.util.StringUtils;
-import com.tb.ba.scala.TurtleEscaper;
-
 /**
  * Repräsentiert einen Link in einem Wiki-Text
  * Created by T. Britsch on 12.07.2015.
@@ -42,7 +39,7 @@ public class Link implements Comparable<Link> {
      */
     public Link(String url, int parent) {
         this.parent = parent;
-        this.url = cleanURL(url);
+        this.url = url;
     }
 
     /**
@@ -55,7 +52,7 @@ public class Link implements Comparable<Link> {
      */
     public Link(String url, int parent, int start, int end) {
         this.parent = parent;
-        this.url = cleanURL(url);
+        this.url = url;
         this.start = start;
         this.end = end;
     }
@@ -70,38 +67,9 @@ public class Link implements Comparable<Link> {
     public Link(String fieldtext, String url, int parent) {
         this.fieldtext = fieldtext;
         this.parent = parent;
-        this.url = cleanURL(url);
+        this.url = url;
     }
 
-    /**
-     * Säubert eine URL und formatiert bzw. filtert diese so, dass sie Kompatibel ist.
-     *
-     * @param url Die zu säubernde URL.
-     * @return die gesäuberte URL.
-     */
-    public static String cleanURL(String url) {
-        if (url.contains("#")) {
-            url = url.substring(0, url.indexOf('#'));
-        }
-        if (url.length() > 1) {
-            if (url.charAt(0) == ':') {
-                url = (url.substring(1, url.length()));
-            }
-        }
-        url = url.replaceAll(": ", ":");
-
-
-        StringBuilder stringBuilder = new StringBuilder();
-        TurtleEscaper turtleEscaper = new TurtleEscaper(stringBuilder, false);
-        turtleEscaper.escapeTurtle(url);
-
-        url = stringBuilder.toString();
-        //System.out.println("|||" + url);
-        //System.out.println("newLink: " + url);
-        url = url.trim();
-        url = StringUtils.capitalize(url);
-        return url;
-    }
 
     public String getFieldtext() {
         return fieldtext;

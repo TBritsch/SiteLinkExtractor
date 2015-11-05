@@ -59,6 +59,9 @@ public abstract class ExtractionMethod {
         for (TupleElement tupleElement: hashSet){
             //System.out.println(tupleElement.toString());
             writer.println(tupleElement.toString());
+            //if(tupleElement.toString().contains("\\\\")){
+            //    System.out.println(tupleElement.toString());
+            //}
         }
 
         hashSet = new HashSet<>();

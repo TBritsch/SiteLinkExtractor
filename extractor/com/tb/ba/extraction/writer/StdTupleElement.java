@@ -17,8 +17,8 @@ public class StdTupleElement extends TupleElement {
      * @param articleNameTo   Link der eingehenden Seite
      */
     public StdTupleElement(String articleNameFrom, String articleNameTo) {
-        this.map.put("articleNameFrom", articleNameFrom);
-        this.map.put("articleNameTo", articleNameTo);
+        this.map.put("articleNameFrom", Filter.buildEntityName(articleNameFrom));
+        this.map.put("articleNameTo", Filter.buildEntityName(articleNameTo));
     }
 
 

@@ -13,7 +13,7 @@ import java.util.concurrent.ConcurrentLinkedQueue;
  * Hauptklasse des Programms.
  */
 public class Extractor {
-    public static final boolean DEBUG = true;
+    public static final boolean DEBUG = false;
     public static final ConcurrentLinkedQueue<String> parseQueue = new
             ConcurrentLinkedQueue<String>();
     public static final String EXTRACTION_FILENAMES =
@@ -55,11 +55,11 @@ public class Extractor {
 
         methods = new ArrayList<>();
         methods.add(new ExtractNormal());
-        methods.add(new ExtractAbstract());
-        methods.add(new ExtractNoTemplate());
-        methods.add(new ExtractNoLinksInInfobox());
-        methods.add(new ExtractInfobox());
-        methods.add(new ExtractRelativePosition());
+        //methods.add(new ExtractAbstract());
+        //methods.add(new ExtractNoTemplate());
+        //methods.add(new ExtractNoLinksInInfobox());
+        //methods.add(new ExtractInfobox());
+        //methods.add(new ExtractRelativePosition());
 
 
         splitterThread = new SplitterThread();

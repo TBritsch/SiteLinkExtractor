@@ -1,6 +1,5 @@
 package com.tb.ba.extraction.datastructure;
 
-import com.sun.org.apache.xpath.internal.SourceTree;
 import com.tb.ba.extraction.Extractor;
 import com.tb.ba.extraction.filter.Filter;
 import org.jsoup.Jsoup;
@@ -10,7 +9,6 @@ import org.jsoup.nodes.Node;
 import org.jsoup.parser.Parser;
 import org.jsoup.select.Elements;
 
-import java.lang.reflect.Array;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -206,11 +204,11 @@ public class Article {
         return links;
     }
 
+    /*
     public static String removeFileLinks(String wikitext) {
         StringBuffer output = new StringBuffer();
 
         ArrayList<Link> links = new ArrayList<>();
-
 
 
         int indexOpen = wikitext.indexOf("[[");
@@ -228,7 +226,8 @@ public class Article {
                     //System.out.println("Dateilink");
                     boolean running = true;
                     while (running) {
-                        nextOcc = Math.min(wikitext.indexOf("[[", indexOpen + 2), wikitext.indexOf("]]", indexOpen + 2));
+                        nextOcc = Math.min(wikitext.indexOf("[[", indexOpen + 2), wikitext.indexOf("]]", indexOpen +
+                                2));
                         nextOcc = Math.min(nextOcc, indexOpen + CONFIG_MAX_FILELINK_LENGT);
                         int max;
                         if (nextOcc < 0) {
@@ -272,10 +271,9 @@ public class Article {
                     }
 
 
-                    positionMarker.setEnd(nextOcc+2);
+                    positionMarker.setEnd(nextOcc + 2);
                     positionMarkers.add(positionMarker);
-                }
-                else{
+                } else {
                 }
 
             }
@@ -284,14 +282,14 @@ public class Article {
             indexOpen = wikitext.indexOf("[[", indexOpen + 1);
         }
 
-        if(positionMarkers.size() > 0){
-            output.append(wikitext.substring(0,positionMarkers.get(0).getStart()));
+        if (positionMarkers.size() > 0) {
+            output.append(wikitext.substring(0, positionMarkers.get(0).getStart()));
             PositionMarker marker = null, old = null;
-            for(int i = 0; i < positionMarkers.size(); i++){
+            for (int i = 0; i < positionMarkers.size(); i++) {
                 old = marker;
                 marker = positionMarkers.get(i);
 
-                if(marker != null && old != null){
+                if (marker != null && old != null) {
                     output.append(wikitext.substring(old.getEnd(CONFIG_MAX_FILELINK_LENGT), marker.getStart()));
                 }
 
@@ -299,15 +297,14 @@ public class Article {
             output.append(wikitext.substring(Math.min(marker.getEnd(CONFIG_MAX_FILELINK_LENGT), wikitext.length()),
                     wikitext.length()));
 
-        }else{
+        } else {
             output.append(wikitext);
         }
 
 
-
         return output.toString();
     }
-
+*/
 
     /**
      * Trennt den Artikeltext in Tokens auf
@@ -321,9 +318,10 @@ public class Article {
         StringBuffer sblink = new StringBuffer();
         Pattern p = Pattern.compile("(?i)\\[\\[(.*?)\\]\\]", Pattern.DOTALL); //Regulärer Ausdruck, der alle Links
         // enthält
-       // Matcher m = p.matcher(removeFileLinks(this.getWikiTextDeletedTemplates()));//Wende diesn Ausdruck auf dem
-       // Wikitext mit entfernten
-        Matcher m = p.matcher((this.getWikiTextDeletedTemplates()));//Wende diesn Ausdruck auf dem Wikitext mit entfernten
+        // Matcher m = p.matcher(removeFileLinks(this.getWikiTextDeletedTemplates()));//Wende diesn Ausdruck auf dem
+        // Wikitext mit entfernten
+        Matcher m = p.matcher((this.getWikiTextDeletedTemplates()));//Wende diesn Ausdruck auf dem Wikitext mit
+        // entfernten
 
         // Templates an
         int i = 0;
