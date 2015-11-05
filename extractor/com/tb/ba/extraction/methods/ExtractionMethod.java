@@ -9,7 +9,10 @@ import java.io.FileNotFoundException;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Abstrakte Klasse einer Extraktionsmethode.
@@ -18,7 +21,8 @@ import java.util.HashSet;
 public abstract class ExtractionMethod {
 
     private PrintWriter writer;
-    private HashSet<TupleElement> hashSet = new HashSet<>();
+    //private HashSet<TupleElement> hashSet = new HashSet<>();
+    private Set<TupleElement> hashSet = Collections.newSetFromMap(new ConcurrentHashMap<TupleElement, Boolean>());
 
     public ExtractionMethod(){
         try {

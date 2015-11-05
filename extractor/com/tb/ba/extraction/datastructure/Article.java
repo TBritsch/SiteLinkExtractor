@@ -52,9 +52,6 @@ public class Article {
 
             this.wikitext = removeRefs(wikitext);
 
-            if (title.contains("1-Pentanol")) {
-                //System.out.println(wikitext);
-            }
             this.handleTemplates();
             this.tokenize();
         }
@@ -131,7 +128,8 @@ public class Article {
                         if (linktext.length() > 5 && Filter.isFile(linktext.substring(0, Math.min(linktext
                                 .length(), 6)))) {
                             String[] link_array = linktext.split(Pattern.quote("|"));
-                            links.add(new Link(link_array[0], Link.PARENT_FILE));
+                            //links.add(new Link(link_array[0], Link.PARENT_FILE));
+                            links.add(new Link(link_array[0], Link.PARENT_FILE, indexOpen + 2));
                             //System.out.print("|||" + link_array[0]);
                         }
                         if (nextOcc != -1) {
@@ -174,7 +172,7 @@ public class Article {
                         linktext = str.substring(Math.min(indexOpen + 2, str.length()), end);
                         if (!linktext.equals("|")) {
                             link_array = linktext.split(Pattern.quote("|"));
-                            links.add(new Link(link_array[0], Link.PARENT_UNDEFINED));
+                            links.add(new Link(link_array[0], Link.PARENT_UNDEFINED, indexOpen + 2));
                             //System.out.print("|||" + link_array[0]);
                         }
                     } catch (ArrayIndexOutOfBoundsException e) {
@@ -203,6 +201,7 @@ public class Article {
 
         return links;
     }
+
 
     /*
     public static String removeFileLinks(String wikitext) {
@@ -632,6 +631,24 @@ public class Article {
      * @return Liste Sämtlicher Link-Tokens.
      */
     public TokenList getTokenList() {
+
+        ArrayList<Link> links= getLinks(wikiTextDeletedTemplates);
+        ArrayList<LinkToken> filteredList = new ArrayList<>();
+        ArrayList<String> addedLinks = new ArrayList<>();
+
+        for (LinkToken token : tokenList.getTokens()){
+            for (Link link: links){
+                if(token.getLink().equals(link.getUrl()) && !addedLinks.contains(token.getLink())){
+                    filteredList.add(token);
+                    addedLinks.add(token.getLink());
+                    break;
+                }
+                //System.out.println(token.getLink() + " : " + link.getUrl() + " ("+filteredList.size()+")");
+            }
+        }
+
+        tokenList.setTokens(filteredList);
+
         return tokenList;
     }
 

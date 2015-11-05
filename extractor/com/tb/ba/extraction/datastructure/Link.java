@@ -48,6 +48,19 @@ public class Link implements Comparable<Link> {
      * @param url    die URL des LINKs
      * @param parent Typ des Eltern-Elements
      * @param start  Start des Links im Text
+     */
+    public Link(String url, int parent, int start) {
+        this.parent = parent;
+        this.url = url;
+        this.start = start;
+    }
+
+    /**
+     * Erstellt einen Link.
+     *
+     * @param url    die URL des LINKs
+     * @param parent Typ des Eltern-Elements
+     * @param start  Start des Links im Text
      * @param end    Ende des Links im Text
      */
     public Link(String url, int parent, int start, int end) {

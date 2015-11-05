@@ -58,6 +58,7 @@ public class WatchdogThread implements Runnable {
                 if (!Extractor.extracting && !Extractor.splitting && Extractor.parseQueue.isEmpty()) {
                     //Alles gemacht
 
+                    Thread.sleep(30000);
                     for (ExtractionMethod method : Extractor.methods) {
                         method.closeWriter();
                     }

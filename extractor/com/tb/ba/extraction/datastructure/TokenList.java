@@ -35,4 +35,8 @@ public class TokenList {
     public double getRating(int position){
         return 1- ((double) position / (double) this.getTotalLength());
     }
+
+    public void setTokens(ArrayList<LinkToken> tokens) {
+        this.tokens = tokens;
+    }
 }

@@ -16,6 +16,8 @@ public class ExtractNoTemplate extends ExtractionMethod {
         ArrayList<Link> links = Article.getLinks(article.getWikitextExcludedTemplates());
 
         for (Link link : links) {
+            //System.out.println(link.toString());
+
             this.addElement(new StdTupleElement(article.getTitle(), link.toString()));
         }
     }
