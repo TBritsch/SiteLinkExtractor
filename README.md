@@ -6,8 +6,7 @@ Extrahiert Seiten-Links aus Wikipedia auf verschiedenen Wegen.
 -Für den eigentlichen SiteLinkExtractor:
 
 	Die Dateien:
-	core/src/main/scala/org/dbpedia/extraction/util/NumberUtils.scala 
-	core/src/main/scala/org/dbpedia/extraction/util/TurtleUtils.scala 
+	core/src/main/scala/*
 
 	aus dem extraction-framework von DBpedia (https://github.com/dbpedia/extraction-framework). Diese sind aus Gründen der Übersichtlichkeit auch Teil dieses Repositories. Die Quelltexte stehen unter der Lizenz GNU General Public License, version 2.
 
