@@ -20,7 +20,6 @@ public class ExtractNormal extends ExtractionMethod{
         HashSet<Link> links = new HashSet<>(linksList);
 
         for (Link link: links){
-            //System.out.println(StdTupleElement.encodeTitle(link.toString()));
             this.addElement(new StdTupleElement(article.getTitle(), link.toString()));
         }
 

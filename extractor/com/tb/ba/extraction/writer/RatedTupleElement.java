@@ -37,21 +37,24 @@ public class RatedTupleElement extends TupleElement {
         if (Filter.isAllowedEntitiyName(this.map.get("articleNameFrom").toString(), this.map.get
                 ("articleNameTo").toString())) {//checking, if namespaces are ok
             StringBuilder sB = new StringBuilder();
-            sB.append("<http://");
-            if (!Extractor.config_language.equals("en") && Extractor.config_language != "") {
-                sB.append(Extractor.config_language);
-                sB.append(".");
-            }
-            sB.append("dbpedia.org/resource/");
+            sB.append("<");
 
-            sB.append(this.map.get("articleNameFrom").toString());
-            sB.append("> <http://dbpedia.org/ontology/wikiPageWikiLink> <http://");
+            StringBuilder host = new StringBuilder();
             if (!Extractor.config_language.equals("en") && Extractor.config_language != "") {
-                sB.append(Extractor.config_language);
-                sB.append(".");
+                host.append(Extractor.config_language);
+                host.append(".");
             }
-            sB.append("dbpedia.org/resource/");
-            sB.append(this.map.get("articleNameTo").toString());
+            host.append("dbpedia.org");
+
+
+            sB.append(Filter.encodeURL(host.toString(), "/resource/" + this.map.get("articleNameFrom")
+                    .toString()));
+            sB.append("> <http://dbpedia.org/ontology/wikiPageWikiLink> <");
+
+
+            sB.append(Filter.encodeURL(host.toString(), "/resource/" + this.map.get("articleNameTo")
+                    .toString()));
+
             sB.append(">");
 
             sB.append(" <");

@@ -31,24 +31,26 @@ public class StdTupleElement extends TupleElement {
     public String toString() {
         if (Filter.isAllowedEntitiyName(this.map.get("articleNameFrom").toString(), this.map.get
                 ("articleNameTo").toString())) {//checking, if namespaces are ok
-
             StringBuilder sB = new StringBuilder();
-            sB.append("<http://");
-            if (!Extractor.config_language.equals("en") && Extractor.config_language != "") {
-                sB.append(Extractor.config_language);
-                sB.append(".");
-            }
-            sB.append("dbpedia.org/resource/");
+            sB.append("<");
 
-            sB.append(encodeTitle(this.map.get("articleNameFrom").toString()));
-            sB.append("> <http://dbpedia.org/ontology/wikiPageWikiLink> <http://");
-            if (!Extractor.config_language.equals("en") && Extractor.config_language != "") {
-                sB.append(Extractor.config_language);
-                sB.append(".");
-            }
-            sB.append("dbpedia.org/resource/");
-            sB.append(encodeTitle(this.map.get("articleNameTo").toString()));
+                StringBuilder host = new StringBuilder();
+                if (!Extractor.config_language.equals("en") && Extractor.config_language != "") {
+                    host.append(Extractor.config_language);
+                    host.append(".");
+                }
+                host.append("dbpedia.org");
+
+
+            sB.append(Filter.encodeURL(host.toString(), "/resource/"+encodeTitle(this.map.get("articleNameFrom")
+                    .toString())));
+            sB.append("> <http://dbpedia.org/ontology/wikiPageWikiLink> <");
+
+            sB.append(Filter.encodeURL(host.toString(), "/resource/"+encodeTitle(this.map.get("articleNameTo")
+                    .toString())));
+
             sB.append("> .");
+            //System.out.println(sB.toString());
             return sB.toString();
         } else {
             return null;
@@ -63,6 +65,7 @@ public class StdTupleElement extends TupleElement {
      *
      * @param title der zu säubernde Titel
      * @return der gesäuberte Titel
+     * @deprecated
      */
     public static String encodeTitle(String title) {
         title = title.replace("\\\\", "\\");

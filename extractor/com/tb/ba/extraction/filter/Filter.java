@@ -6,6 +6,9 @@ import com.tb.ba.scala.TurtleEscaper;
 import com.tb.ba.scala.UriDecoder;
 import com.tb.ba.scala.WikiUtil;
 
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.regex.Pattern;
 
@@ -26,9 +29,13 @@ public class Filter {
      */
     public static String buildEntityName(String raw) {
 
-        StringBuffer rawbuf = new StringBuffer(raw);
-        rawbuf.setCharAt(0, Character.toUpperCase(rawbuf.charAt(0)));
-        raw = rawbuf.toString();
+
+        if(raw.length() > 0){
+            StringBuffer rawbuf = new StringBuffer(raw);
+            rawbuf.setCharAt(0, Character.toUpperCase(rawbuf.charAt(0)));
+            raw = rawbuf.toString();
+        }
+
 
 
         if (raw.contains("#")) {
@@ -40,7 +47,6 @@ public class Filter {
                 raw = (raw.substring(1, raw.length()));
             }
         }
-
 
         //raw = raw.replace(translateCategorie(Extractor.config_language) + ": ", translateCategorie(Extractor
         //        .config_language) + ":");
@@ -57,18 +63,23 @@ public class Filter {
             raw = raw.replace(prefix + ": ", prefix + ":");
         }
 
+
         //raw = raw.replaceAll(": ", ":");
 
         raw = UriDecoder.decode(raw);
         raw = WikiUtil.cleanSpace(raw);
-        raw = WikiUtil.wikiEncode(raw);
 
-        StringBuilder stringBuilder = new StringBuilder();
-        TurtleEscaper turtleEscaper = new TurtleEscaper(stringBuilder, false);
-        turtleEscaper.escapeTurtle(raw);
 
-        raw = stringBuilder.toString();
 
+
+        if(!(Extractor.config_language.equals("en") || Extractor.config_language.equals("als"))){
+            raw = WikiUtil.wikiEncode(raw);
+            StringBuilder stringBuilder = new StringBuilder();
+            TurtleEscaper turtleEscaper = new TurtleEscaper(stringBuilder, false);
+            turtleEscaper.escapeTurtle(raw);
+
+            raw = stringBuilder.toString();
+        }
 
         raw = raw.replace("\\\\", "\\");
         raw = raw.replace(" ", "_");
@@ -80,6 +91,9 @@ public class Filter {
 
         raw = raw.trim();
         raw = StringUtils.capitalize(raw);
+
+
+
 
 
         return raw;
@@ -192,6 +206,30 @@ public class Filter {
         }
 
         return isFile;
+    }
+
+
+    public static String encodeURL(String host, String path){
+
+        String ret = "";
+        if(Extractor.config_language.equals("en") || Extractor.config_language.equals("als")){
+            try {
+                URI uri = new URI(
+                        "http",
+                        host,
+                        path,
+                        null);
+
+                ret = uri.toASCIIString();
+            } catch (URISyntaxException e) {
+                if(Extractor.DEBUG){
+                    e.printStackTrace();
+                }
+            }
+        }else{
+            return "http://" + host + path;
+        }
+        return ret;
     }
 
 

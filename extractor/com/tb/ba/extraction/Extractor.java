@@ -54,11 +54,11 @@ public class Extractor {
 
 
         methods = new ArrayList<>();
-        //methods.add(new ExtractNormal());
-        //methods.add(new ExtractAbstract());
+        methods.add(new ExtractNormal());
+        methods.add(new ExtractAbstract());
         methods.add(new ExtractNoTemplate());
-        //methods.add(new ExtractNoLinksInInfobox());
-        //methods.add(new ExtractInfobox());
+        methods.add(new ExtractNoLinksInInfobox());
+        methods.add(new ExtractInfobox());
         methods.add(new ExtractRelativePosition());
 
 
