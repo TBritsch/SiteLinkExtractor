@@ -325,13 +325,12 @@ public class Article {
         // Templates an
         int i = 0;
         while (m.find()) {//Iteration über alle Fundstellen eines Links
-            m.appendReplacement(sblink, "##link" + i + "##");//Ersetze den jeweiligen Link mit einem Platzhalter
+            m.appendReplacement(sblink, " ##link" + i + "##");//Ersetze den jeweiligen Link mit einem Platzhalter
             //Beispiel: [[Module der ISS]] -> ##LINK1##
             links.put(i, m.group(1).toString());//Füge Link der Liste der Links hinzu
             i++;
         }
         m.appendTail(sblink);
-
         String[] tokens = sblink.toString().replaceAll("\\s+", " ").split(" ");//Entferne das Vorkommen von mehreren
         // Leerzeichen und Zerteile dann den String bei jedem Leerzeichen
 
@@ -635,13 +634,38 @@ public class Article {
         ArrayList<Link> links= getLinks(wikiTextDeletedTemplates);
         ArrayList<LinkToken> filteredList = new ArrayList<>();
         ArrayList<String> addedLinks = new ArrayList<>();
-
-        for (LinkToken token : tokenList.getTokens()){
+        /*
+                for (LinkToken token : tokenList.getTokens()){
             for (Link link: links){
                 if(token.getLink().equals(link.getUrl()) && !addedLinks.contains(token.getLink())){
+
+                    System.out.println(link);
+
                     filteredList.add(token);
                     addedLinks.add(token.getLink());
                     break;
+                }
+                //System.out.println(token.getLink() + " : " + link.getUrl() + " ("+filteredList.size()+")");
+            }
+        }
+
+         */
+
+
+        for (LinkToken token : tokenList.getTokens()){
+            for (Link link: links){
+                if(token.getLink().equals(link.getUrl())){
+                    if( !addedLinks.contains(token.getLink())){
+
+                        filteredList.add(token);
+                        addedLinks.add(token.getLink());
+                        break;
+                    }else{
+                        //System.out.println("1" + link);
+
+                    }
+                }else{
+                    //System.out.println("2" + link);
                 }
                 //System.out.println(token.getLink() + " : " + link.getUrl() + " ("+filteredList.size()+")");
             }
