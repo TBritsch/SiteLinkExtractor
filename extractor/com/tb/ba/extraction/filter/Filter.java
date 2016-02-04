@@ -1,6 +1,5 @@
 package com.tb.ba.extraction.filter;
 
-import com.sun.xml.internal.ws.util.StringUtils;
 import com.tb.ba.extraction.Extractor;
 import com.tb.ba.scala.TurtleEscaper;
 import com.tb.ba.scala.UriDecoder;
@@ -8,7 +7,6 @@ import com.tb.ba.scala.WikiUtil;
 
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.regex.Pattern;
 
@@ -90,9 +88,13 @@ public class Filter {
 
 
         raw = raw.trim();
-        raw = StringUtils.capitalize(raw);
-
-
+        //raw = StringUtils.capitalize(raw);
+        
+        // replaces the above function
+        char first = raw.charAt(0);
+        raw = raw.substring(1);
+        first = Character.toUpperCase(first);
+        raw = first + raw;
 
 
 
