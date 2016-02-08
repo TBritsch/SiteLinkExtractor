@@ -29,6 +29,10 @@ public class Extractor {
     /**
      * Führt die Extraktion aus.
      * Das Programm endet mit der Extraktion des letzten Artikels.
+     * 
+     * Accepts Dump files from
+     * http://dumps.wikimedia.org/
+     * of the type: [lang]wiki-[date]-pages-articles.xml.bz2
      *
      * @param args [0] = Sprachversion des zu extrahierenden Wikis
      *             [1] = Pfad zur bz2-Datei

@@ -269,6 +269,7 @@ public class Filter {
     public static void init() {
         Filter.translateFiles.put("de", new String[]{"Datei", "Bild", "Image"});
         Filter.translateFiles.put("als", new String[]{"Datei", "Bild"});
+        Filter.translateFiles.put("eu", new String[]{"Fitxategi", "Irudi"});
         Filter.translateFiles.put("en", new String[]{"File", "Image"});
         Filter.translateFiles.put("es", new String[]{"File", "Image"});
         Filter.translateFiles.put("it", new String[]{"File", "Image"});
@@ -276,7 +277,7 @@ public class Filter {
         Filter.translateFiles.put("ru", new String[]{"File", "Image"});
         Filter.translateFiles.put("zh", new String[]{"File", "Image"});
 
-
+        Filter.translateCategories.put("eu", "Kategoria");
         Filter.translateCategories.put("de", "Kategorie");
         Filter.translateCategories.put("en", "Category");
         Filter.translateCategories.put("es", "Categoría");
