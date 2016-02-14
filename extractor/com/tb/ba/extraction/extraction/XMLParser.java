@@ -5,20 +5,6 @@ import com.tb.ba.extraction.Extractor;
 import com.tb.ba.extraction.datastructure.Article;
 import org.jsoup.Jsoup;
 import org.jsoup.parser.Parser;
-import org.jsoup.select.Elements;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
-import org.xml.sax.InputSource;
-import org.xml.sax.SAXException;
-import org.xml.sax.SAXParseException;
-
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
-import java.io.IOException;
-import java.io.StringReader;
 
 /**
  * Bearbeitet einen einzelnen Wikipedia-Artikel und erstellt ein Article-Object davon.
@@ -41,7 +27,7 @@ public class XMLParser {
         try {
             org.jsoup.nodes.Document doc = Jsoup.parse(xml, "", Parser.xmlParser());
 
-            if (doc.select("text").size() != 0 && doc.select("title").size() != 0) {
+            if (doc.select("text").size() != 0 && doc.select("title").size() != 0 && doc.select("ns").size() != 0) {
                 String wikitext = doc.select("text").get(0).text();
                 String wikititle = doc.select("title").get(0).text();
                 int namespace = Integer.parseInt(doc.select("ns").get(0).text());

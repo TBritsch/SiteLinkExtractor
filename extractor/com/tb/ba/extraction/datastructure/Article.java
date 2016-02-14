@@ -396,9 +396,9 @@ public class Article {
      */
     private void handleTemplates() {
 
-        ArrayList<Occurrence> occurrences = new ArrayList(); //Sammelt das Auftreten vom Beginn, bzw. vom Ende eines
+        ArrayList<Occurrence> occurrences = new ArrayList<>(); //Sammelt das Auftreten vom Beginn, bzw. vom Ende eines
         // Templates
-        ArrayList<Template> templates = new ArrayList(); //Speichert die Templates, die extrahiert werden
+        ArrayList<Template> templates = new ArrayList<>(); //Speichert die Templates, die extrahiert werden
         Stack<Occurrence> stack = new Stack<>(); //Kellerspeicher, der die geöffneten Templates speichert
 
 
@@ -652,19 +652,18 @@ public class Article {
          */
 
 
-        for (LinkToken token : tokenList.getTokens()){
-            for (Link link: links){
-                if(token.getLink().equals(link.getUrl())){
-                    if( !addedLinks.contains(token.getLink())){
+        for (LinkToken token : tokenList.getTokens()) {
+            for (Link link: links) {
+                if (token.getLink().equals(link.getUrl())) {
+                    if (!addedLinks.contains(token.getLink())) {
 
                         filteredList.add(token);
                         addedLinks.add(token.getLink());
                         break;
-                    }else{
+                    } else {
                         //System.out.println("1" + link);
-
                     }
-                }else{
+                } else {
                     //System.out.println("2" + link);
                 }
                 //System.out.println(token.getLink() + " : " + link.getUrl() + " ("+filteredList.size()+")");

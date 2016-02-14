@@ -13,7 +13,7 @@ import java.util.concurrent.ConcurrentLinkedQueue;
  * Hauptklasse des Programms.
  */
 public class Extractor {
-    public static final boolean DEBUG = false;
+    public static final boolean DEBUG = true;
     public static final ConcurrentLinkedQueue<String> parseQueue = new
             ConcurrentLinkedQueue<String>();
     public static final String EXTRACTION_FILENAMES =
@@ -58,25 +58,37 @@ public class Extractor {
 
 
         methods = new ArrayList<>();
-        methods.add(new ExtractNormal());
-        methods.add(new ExtractAbstract());
+//        methods.add(new ExtractNormal());
+//        methods.add(new ExtractAbstract());
         methods.add(new ExtractNoTemplate());
-        methods.add(new ExtractNoLinksInInfobox());
-        methods.add(new ExtractInfobox());
+//        methods.add(new ExtractNoLinksInInfobox());
+//        methods.add(new ExtractInfobox());
         methods.add(new ExtractRelativePosition());
 
 
         splitterThread = new SplitterThread();
-        new Thread(splitterThread).start();
-
+        
+        Thread split = new Thread(splitterThread);
+        split.start();
+        try {
+			split.join();
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+        
         ParserThread p = new ParserThread();
-        new Thread(p).start();
+        Thread parse = new Thread(p);
+        parse.start();
+        try {
+			parse.join();
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 
-        WatchdogThread watchdogThread = new WatchdogThread();
-        new Thread(watchdogThread).start();
-
+//        WatchdogThread watchdogThread = new WatchdogThread();
+//        new Thread(watchdogThread).start();
 
     }
-
-
 }

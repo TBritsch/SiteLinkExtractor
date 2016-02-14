@@ -91,12 +91,12 @@ public class Filter {
         //raw = StringUtils.capitalize(raw);
         
         // replaces the above function
-        char first = raw.charAt(0);
-        raw = raw.substring(1);
-        first = Character.toUpperCase(first);
-        raw = first + raw;
-
-
+        if (raw.length() > 0) {
+        	char first = raw.charAt(0);
+        	raw = raw.substring(1);
+            first = Character.toUpperCase(first);
+            raw = first + raw;
+        }
 
         return raw;
     }
@@ -138,20 +138,25 @@ public class Filter {
             allowed = false;
         }
 
-        //raw = raw.replaceAll(":[a-zA-Z]{1,3}:", "");
-
-        //Links auf anderssprachige Wikis unterbinden
+        // Remove links to other language versions
         if (Pattern.matches("[a-zA-Z]{2,3}:.*?", from) || Pattern.matches("[a-zA-Z]{2,3}:.*?", to)) {
 
-            //eigene Sprache erlauben
-            if (!from.substring(0, Extractor.config_language.length()).toLowerCase().equals(Extractor.config_language
-                    .toLowerCase())
-                    || !to.substring
-                    (0, Extractor.config_language.length()).toLowerCase().equals(Extractor.config_language
-                    .toLowerCase())) {
-                allowed = false;
-
-            }
+        	int langLength = Extractor.config_language.length();
+        	String fromLang = null;
+        	if (from.length() >= langLength) {
+        		fromLang = from.substring(0, Extractor.config_language.length()).toLowerCase();	
+        		if (!fromLang.equals(Extractor.config_language.toLowerCase())) {
+        			allowed = false;
+        		}
+        	}
+        	
+        	String toLang = null;
+        	if (to.length() >= langLength) {
+        		toLang = to.substring(0, Extractor.config_language.length()).toLowerCase();
+        		if (!toLang.equals(Extractor.config_language.toLowerCase())) {
+        			allowed = false;
+        		}
+        	}
         }
 
         return allowed;

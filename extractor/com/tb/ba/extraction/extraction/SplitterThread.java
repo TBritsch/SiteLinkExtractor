@@ -1,6 +1,7 @@
 package com.tb.ba.extraction.extraction;
 
 import com.tb.ba.extraction.Extractor;
+
 import org.apache.commons.compress.compressors.bzip2.BZip2CompressorInputStream;
 
 import java.io.*;
@@ -58,6 +59,7 @@ public class SplitterThread implements Runnable {
 
                 } else {
                     try {
+                    	System.out.println("Splitter goes to sleep");
                         Thread.sleep(100);
                     } catch (InterruptedException e) {
                         if (Extractor.DEBUG) {
@@ -84,8 +86,7 @@ public class SplitterThread implements Runnable {
                 e.printStackTrace();
             }
         }
-
-
+        System.out.println(Extractor.parseQueue.size());
     }
 
     /**

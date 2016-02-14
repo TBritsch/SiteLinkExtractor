@@ -40,22 +40,23 @@ public class ParserThread implements Runnable{
                             }
                         }
                     }
+               } else {
+                    	break;
+               }
 
 
-
-
-
-                }else{
-                    Extractor.extracting = false;
-                    try {
-                        Thread.sleep(50);
-                    } catch (InterruptedException e) {
-                        if(Extractor.DEBUG){
-                            System.out.println("ParserThread");
-                            e.printStackTrace();
-                        }
-                    }
-                }
+//                }else{
+//                    Extractor.extracting = false;
+//                    try {
+//                    	System.out.println("Parser goes to sleep");
+//                        Thread.sleep(50);
+//                    } catch (InterruptedException e) {
+//                        if(Extractor.DEBUG){
+//                            System.out.println("ParserThread");
+//                            e.printStackTrace();
+//                        }
+//                    }
+//                }
             } catch (IndexOutOfBoundsException e){
                 if(Extractor.DEBUG){
                     System.out.println("Error: ParserThread: IndexOutOfBoundsException" + e.getStackTrace());
@@ -67,8 +68,6 @@ public class ParserThread implements Runnable{
                     e.printStackTrace();
                 }
             }
-
         }
-
     }
 }
