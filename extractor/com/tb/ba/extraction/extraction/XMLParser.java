@@ -1,8 +1,10 @@
 package com.tb.ba.extraction.extraction;
 
 
+
 import com.tb.ba.extraction.Extractor;
 import com.tb.ba.extraction.datastructure.Article;
+
 import org.jsoup.Jsoup;
 import org.jsoup.parser.Parser;
 
@@ -26,9 +28,9 @@ public class XMLParser {
 
         try {
             org.jsoup.nodes.Document doc = Jsoup.parse(xml, "", Parser.xmlParser());
-
+            
             if (doc.select("text").size() != 0 && doc.select("title").size() != 0 && doc.select("ns").size() != 0) {
-                String wikitext = doc.select("text").get(0).text();
+            	String wikitext = doc.select("text").get(0).text();
                 String wikititle = doc.select("title").get(0).text();
                 int namespace = Integer.parseInt(doc.select("ns").get(0).text());
                 this.article = new Article(wikititle, wikitext, namespace);
@@ -37,8 +39,8 @@ public class XMLParser {
 
         } catch (Exception e) {
             if (Extractor.DEBUG) {
-                System.out.println("XMLParser");
-                System.out.println(xml);
+                System.err.println("XMLParser");
+                System.err.println(xml);
                 e.printStackTrace();
             }
         }

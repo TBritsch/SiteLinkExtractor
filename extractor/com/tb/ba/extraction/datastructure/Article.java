@@ -313,24 +313,79 @@ public class Article {
         HashMap<Integer, String> links = new HashMap<>(); // Initialisiere Liste mit allen Tokens, die einen Link
         // enthalten
 
-
         StringBuffer sblink = new StringBuffer();
-        Pattern p = Pattern.compile("(?i)\\[\\[(.*?)\\]\\]", Pattern.DOTALL); //Regulärer Ausdruck, der alle Links
+        
+        // new method for recognising links (for the old, see comment below)
+        char [] wikiText = this.getWikiTextDeletedTemplates().toCharArray();
+        int linkCount = 0;
+        LinkedList<String> linkStrings = new LinkedList<String>();
+        boolean startStarted = false;
+        boolean endStarted = false;
+        for (int i = 0; i < wikiText.length; i++) {
+        	if (wikiText[i] == '[' && startStarted ) {
+        		startStarted = false;
+        		linkStrings.add("");
+        	} else if (wikiText[i] == '[' && !startStarted) {
+        		startStarted = true;
+        	} else if (wikiText[i] == ']' && !endStarted) {
+        		endStarted = true;
+        	} else if (wikiText[i] == ']' && endStarted) {
+        		endStarted = false;
+        		
+        		// sometimes wrong syntax
+        		if (linkStrings.size() > 0) {
+	        		linkCount++;
+	        		sblink.append(" ##link" + linkCount + "##");
+	        		links.put(linkCount, linkStrings.removeLast());
+        		}
+        	} else {
+        		
+        		// opened/closed only with one bracket
+    			startStarted = false;
+    			endStarted = false;
+
+        		if (linkStrings.size() == 0) {
+        			sblink.append(wikiText[i]);
+        		} else {
+        			String s = linkStrings.getLast();
+        			s = s + wikiText[i];
+        			linkStrings.removeLast();
+        			linkStrings.add(s);
+        		}
+        	}
+        }
+        
+        
+ /**  the commented piece of code does not consider link patterns in images, e.g.
+   [[Fitxategi:Rzeczpospolita2nar.png|thumb|left|Mongolen inbasioen ondoren Ukraina
+    kanpoko herrien zuzendaritzapean bizi izan zen. XIV. mendetik XVII.era [[Lituania]]
+     eta [[Polonia]]ren menpe. Batzuen zein besteen eraginpide handiago edo 
+     txikiagoa denbora tarte horretan partekatua izan zen.]]
+     
+     ## code start
+     
+       Pattern p = Pattern.compile("(?i)\\[\\[(.*?)\\]\\]", Pattern.DOTALL); //Regulärer Ausdruck, der alle Links
         // enthält
         // Matcher m = p.matcher(removeFileLinks(this.getWikiTextDeletedTemplates()));//Wende diesn Ausdruck auf dem
         // Wikitext mit entfernten
         Matcher m = p.matcher((this.getWikiTextDeletedTemplates()));//Wende diesn Ausdruck auf dem Wikitext mit
-        // entfernten
-
-        // Templates an
+        // entfernten Templates an
+        
         int i = 0;
         while (m.find()) {//Iteration über alle Fundstellen eines Links
             m.appendReplacement(sblink, " ##link" + i + "##");//Ersetze den jeweiligen Link mit einem Platzhalter
             //Beispiel: [[Module der ISS]] -> ##LINK1##
             links.put(i, m.group(1).toString());//Füge Link der Liste der Links hinzu
+            System.out.println(m.group(1).toString());
             i++;
         }
         m.appendTail(sblink);
+        
+     ## code end
+        **/
+        
+        
+        
         String[] tokens = sblink.toString().replaceAll("\\s+", " ").split(" ");//Entferne das Vorkommen von mehreren
         // Leerzeichen und Zerteile dann den String bei jedem Leerzeichen
 
@@ -350,7 +405,7 @@ public class Article {
                             link_string = links.get(Integer.parseInt(m3.group()));
                         } catch (NumberFormatException e) {
                             if (Extractor.DEBUG) {
-                                System.out.println("(" + m3.group() + "| " + links.size() + ")" + "(" + m2.group() +
+                                System.err.println("(" + m3.group() + "| " + links.size() + ")" + "(" + m2.group() +
                                         ")");
 
                                 e.printStackTrace();
@@ -366,10 +421,10 @@ public class Article {
                                     // Vorkommens des Links
                                 } catch (Exception e) {
                                     if (Extractor.DEBUG) {
-                                        System.out.println("tokenize: (" + link_string + ") (" + m3.group() + "| " +
+                                        System.err.println("tokenize: (" + link_string + ") (" + m3.group() + "| " +
                                                 links.size() + ")");
                                         for (String link_ : links.values()) {
-                                            System.out.print(link_ + ", ");
+                                            System.err.print(link_ + ", ");
                                         }
                                         e.printStackTrace();
                                     }
@@ -446,11 +501,11 @@ public class Article {
 
                 } catch (EmptyStackException e) {
                     if (Extractor.DEBUG) {
-                        System.out.println("handleTemplates: Article: " + this.getTitle() + ": " + occurrence.getPos());
+                        System.err.println("handleTemplates: Article: " + this.getTitle() + ": " + occurrence.getPos());
                         for (Occurrence occurrence1 : occurrences) {
-                            System.out.print(occurrence1.getPos() + occurrence1.getType() + ", ");
+                            System.err.print(occurrence1.getPos() + occurrence1.getType() + ", ");
                         }
-                        System.out.println();
+                        System.err.println();
                         e.printStackTrace();
                     }
                 }
