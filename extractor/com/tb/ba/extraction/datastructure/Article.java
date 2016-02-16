@@ -2,6 +2,7 @@ package com.tb.ba.extraction.datastructure;
 
 import com.tb.ba.extraction.Extractor;
 import com.tb.ba.extraction.filter.Filter;
+
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -9,7 +10,12 @@ import org.jsoup.nodes.Node;
 import org.jsoup.parser.Parser;
 import org.jsoup.select.Elements;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.EmptyStackException;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.Stack;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -51,7 +57,6 @@ public class Article {
             //System.out.print("title: " + title + ":");
 
             this.wikitext = removeRefs(wikitext);
-
             this.handleTemplates();
             this.tokenize();
         }
@@ -63,6 +68,7 @@ public class Article {
         //input = input.replaceAll("<ref(\\s)*name(\\s)*=(\\w|\\s){1,100}/>", "");
         input = input.replaceAll("<ref .*?(</ref>|/>)", "");
         Document doc = Jsoup.parse(input, "", Parser.xmlParser());
+        doc.outputSettings(new Document.OutputSettings().prettyPrint(false));
         Elements els = doc.select("ref");
         for (Element e : els) {
             //System.out.println(e.text() + " " + e.attr("name"));
@@ -203,108 +209,6 @@ public class Article {
     }
 
 
-    /*
-    public static String removeFileLinks(String wikitext) {
-        StringBuffer output = new StringBuffer();
-
-        ArrayList<Link> links = new ArrayList<>();
-
-
-        int indexOpen = wikitext.indexOf("[[");
-        int indexOpenOld = -2;
-        int nextOcc = -2;
-        ArrayList<PositionMarker> positionMarkers = new ArrayList<>();
-        while (indexOpen >= 0) { //Dursuche den Text nach allen Stellen, an den ein Template mittels "{{" geöffnet wird.
-            PositionMarker positionMarker = new PositionMarker();
-            if (indexOpen >= indexOpenOld + 2) {
-                if (Filter.isFile(wikitext.substring(indexOpen + 2, Math.min(indexOpen + 8, wikitext.length())))) {
-                    positionMarker.setStart(indexOpen);
-                    //Dateilink -> Hier gibt es rekurision
-                    Stack<Occurrence> stack = new Stack<>();
-                    stack.push(new Occurrence(indexOpen, Occurrence.OPEN));
-                    //System.out.println("Dateilink");
-                    boolean running = true;
-                    while (running) {
-                        nextOcc = Math.min(wikitext.indexOf("[[", indexOpen + 2), wikitext.indexOf("]]", indexOpen +
-                                2));
-                        nextOcc = Math.min(nextOcc, indexOpen + CONFIG_MAX_FILELINK_LENGT);
-                        int max;
-                        if (nextOcc < 0) {
-                            max = wikitext.length();
-                        } else {
-                            max = Math.min(nextOcc, wikitext.length());
-
-                        }
-
-                        String linktext = wikitext.substring(indexOpen + 2, Math.min(wikitext.length(), max));
-                        if (linktext.length() > 5 && Filter.isFile(linktext.substring(0, Math.min(linktext
-                                .length(), 6)))) {
-                            String[] link_array = linktext.split(Pattern.quote("|"));
-                            links.add(new Link(link_array[0], Link.PARENT_FILE));
-                            //System.out.print("|||" + link_array[0]);
-                        }
-                        if (nextOcc != -1) {
-                            indexOpen = nextOcc;
-                            if (wikitext.charAt(nextOcc) == '[') {
-                                //Nächstes Auftreten ist [[
-                                stack.push(new Occurrence(indexOpen, Occurrence.OPEN));
-                            } else if (wikitext.charAt(nextOcc) == ']') {
-                                // ]]
-                                if (!stack.empty()) {
-                                    stack.pop();
-                                }
-
-                                if (stack.empty()) {
-                                    running = false;
-                                }
-
-                            } else {
-                                running = false;
-                            }
-                        } else {
-                            running = false;
-                            nextOcc = wikitext.length();
-                        }
-
-
-                    }
-
-
-                    positionMarker.setEnd(nextOcc + 2);
-                    positionMarkers.add(positionMarker);
-                } else {
-                }
-
-            }
-            // ArrayList hinzu
-            indexOpenOld = indexOpen;
-            indexOpen = wikitext.indexOf("[[", indexOpen + 1);
-        }
-
-        if (positionMarkers.size() > 0) {
-            output.append(wikitext.substring(0, positionMarkers.get(0).getStart()));
-            PositionMarker marker = null, old = null;
-            for (int i = 0; i < positionMarkers.size(); i++) {
-                old = marker;
-                marker = positionMarkers.get(i);
-
-                if (marker != null && old != null) {
-                    output.append(wikitext.substring(old.getEnd(CONFIG_MAX_FILELINK_LENGT), marker.getStart()));
-                }
-
-            }
-            output.append(wikitext.substring(Math.min(marker.getEnd(CONFIG_MAX_FILELINK_LENGT), wikitext.length()),
-                    wikitext.length()));
-
-        } else {
-            output.append(wikitext);
-        }
-
-
-        return output.toString();
-    }
-*/
-
     /**
      * Trennt den Artikeltext in Tokens auf
      */
@@ -314,6 +218,7 @@ public class Article {
         // enthalten
 
         StringBuffer sblink = new StringBuffer();
+        
         
         // new method for recognising links (for the old, see comment below)
         char [] wikiText = this.getWikiTextDeletedTemplates().toCharArray();
@@ -332,8 +237,9 @@ public class Article {
         	} else if (wikiText[i] == ']' && endStarted) {
         		endStarted = false;
         		
-        		// sometimes wrong syntax
+        		// sometimes wrong syntax and ]] occurs without start
         		if (linkStrings.size() > 0) {
+        			
 	        		linkCount++;
 	        		sblink.append(" ##link" + linkCount + "##");
 	        		links.put(linkCount, linkStrings.removeLast());
@@ -343,7 +249,15 @@ public class Article {
         		// opened/closed only with one bracket
     			startStarted = false;
     			endStarted = false;
-
+    			
+    			if (wikiText[i] == '\n') {
+    				
+    				// end of line but unfinished link [[
+    				if (linkStrings.size() > 0) {
+    					linkStrings.clear();
+    				}
+    			}
+    			
         		if (linkStrings.size() == 0) {
         			sblink.append(wikiText[i]);
         		} else {
@@ -356,38 +270,10 @@ public class Article {
         }
         
         
- /**  the commented piece of code does not consider link patterns in images, e.g.
-   [[Fitxategi:Rzeczpospolita2nar.png|thumb|left|Mongolen inbasioen ondoren Ukraina
-    kanpoko herrien zuzendaritzapean bizi izan zen. XIV. mendetik XVII.era [[Lituania]]
-     eta [[Polonia]]ren menpe. Batzuen zein besteen eraginpide handiago edo 
-     txikiagoa denbora tarte horretan partekatua izan zen.]]
-     
-     ## code start
-     
-       Pattern p = Pattern.compile("(?i)\\[\\[(.*?)\\]\\]", Pattern.DOTALL); //Regulärer Ausdruck, der alle Links
-        // enthält
-        // Matcher m = p.matcher(removeFileLinks(this.getWikiTextDeletedTemplates()));//Wende diesn Ausdruck auf dem
-        // Wikitext mit entfernten
-        Matcher m = p.matcher((this.getWikiTextDeletedTemplates()));//Wende diesn Ausdruck auf dem Wikitext mit
-        // entfernten Templates an
+      //Entferne das Vorkommen von mehreren
+        // whitespaces [ \t\n\x0B\f\r] und Zerteile dann den String bei jedem Leerzeichen
         
-        int i = 0;
-        while (m.find()) {//Iteration über alle Fundstellen eines Links
-            m.appendReplacement(sblink, " ##link" + i + "##");//Ersetze den jeweiligen Link mit einem Platzhalter
-            //Beispiel: [[Module der ISS]] -> ##LINK1##
-            links.put(i, m.group(1).toString());//Füge Link der Liste der Links hinzu
-            System.out.println(m.group(1).toString());
-            i++;
-        }
-        m.appendTail(sblink);
-        
-     ## code end
-        **/
-        
-        
-        
-        String[] tokens = sblink.toString().replaceAll("\\s+", " ").split(" ");//Entferne das Vorkommen von mehreren
-        // Leerzeichen und Zerteile dann den String bei jedem Leerzeichen
+        String[] tokens = sblink.toString().replaceAll("\\s+", " ").split(" ");
 
         for (int j = 0; j < tokens.length; j++) {//Iteration über alle Tokens
             String token = tokens[j];
@@ -584,58 +470,7 @@ public class Article {
 
         return builder.toString().trim();
 
-
-        /*
-                for(String sentence : stentences){
-            if(size + sentence.length() > CONFIG_MAX_ABSTRACT_LENGTH)
-            {
-                if (builder.toString().equals(""))
-                {
-                    return sentence;
-                }
-                return builder.toString().trim();
-            }
-
-            size += sentence.length();
-            builder.append(sentence);
-        }
-
-        return builder.toString().trim();
-         */
-
     }
-
-/*
-    //Gibt einen gesaeuberten Wikitext wieder. Sorgt dafür, dass Links entfernt werden und Templates;
-    private String getCleanedWikiTextAbstract(){
-        StringBuffer wikitext = new StringBuffer();
-
-        Pattern p = Pattern.compile("(?i)\\[\\[(.*?)\\]\\]", Pattern.DOTALL);
-        Matcher m = p.matcher(this.getWikitext().split("==")[0]);
-        while(m.find()) {
-            String link = m.group(1).toString();
-            String[] link_array = link.split(Pattern.quote("|"));
-            String replace = link_array[0];
-            if(link_array.length > 1){
-                replace = link_array[1];
-            }
-
-            try {
-                m.appendReplacement(wikitext, Matcher.quoteReplacement(replace));
-
-            }catch (IndexOutOfBoundsException e){
-                System.out.println("Error: Could not add: " + link + " in Article: " + this.getTitle());
-            }
-
-
-        }
-        m.appendTail(wikitext);
-
-        return wikitext.toString();
-
-    }
-
-    */
 
 
     public String getTitle() {
@@ -666,18 +501,18 @@ public class Article {
         return templates;
     }
 
-    public int getNamspace() {
-        return namspace;
-    }
-
-    /**
-     * Setzt den Namespace des Artikels.
-     *
-     * @param namspace die Namespace-ID.
-     */
-    public void setNamspace(int namspace) {
-        this.namspace = namspace;
-    }
+//    public int getNamspace() {
+//        return namspace;
+//    }
+//
+//    /**
+//     * Setzt den Namespace des Artikels.
+//     *
+//     * @param namspace die Namespace-ID.
+//     */
+//    public void setNamspace(int namspace) {
+//        this.namspace = namspace;
+//    }
 
     /**
      * Gibt die Liste sämtlicher Link-Tokens zurück.

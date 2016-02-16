@@ -7,6 +7,7 @@ import com.tb.ba.extraction.datastructure.Article;
 
 import org.jsoup.Jsoup;
 import org.jsoup.parser.Parser;
+import org.jsoup.nodes.Document;
 
 /**
  * Bearbeitet einen einzelnen Wikipedia-Artikel und erstellt ein Article-Object davon.
@@ -22,15 +23,15 @@ public class XMLParser {
      * @param xml der zu extrahierende XML-String.
      */
     public XMLParser(String xml) {
-        //this.article = new Article(eElement.getElementsByTagName("title").item(0).getTextContent(), eElement
-        // .getElementsByTagName("text").item(0).getTextContent());
-
 
         try {
-            org.jsoup.nodes.Document doc = Jsoup.parse(xml, "", Parser.xmlParser());
-            
-            if (doc.select("text").size() != 0 && doc.select("title").size() != 0 && doc.select("ns").size() != 0) {
-            	String wikitext = doc.select("text").get(0).text();
+            Document doc = Jsoup.parse(xml, "", Parser.xmlParser());
+            doc.outputSettings(new Document.OutputSettings().prettyPrint(false));
+            if (doc.select("text").size() != 0 &&
+            		doc.select("title").size() != 0 &&
+            		doc.select("ns").size() != 0) {
+            	
+            	String wikitext = doc.select("text").get(0).html();
                 String wikititle = doc.select("title").get(0).text();
                 int namespace = Integer.parseInt(doc.select("ns").get(0).text());
                 this.article = new Article(wikititle, wikitext, namespace);
@@ -44,52 +45,6 @@ public class XMLParser {
                 e.printStackTrace();
             }
         }
-        //return doc.toString();
-
-
-
-        /*
-        try {
-
-            DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
-            DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
-            Document doc = dBuilder.parse(new InputSource(new StringReader(xml)));
-
-            doc.getDocumentElement().normalize();
-
-            NodeList nPage = doc.getElementsByTagName("page");
-
-            for (int temp = 0; temp < nPage.getLength(); temp++) {
-
-                Node nNode = nPage.item(temp);
-
-                if (nNode.getNodeType() == Node.ELEMENT_NODE) {
-
-                    Element eElement = (Element) nNode;
-                    this.article = new Article(eElement.getElementsByTagName("title").item(0).getTextContent(),
-                    eElement.getElementsByTagName("text").item(0).getTextContent());
-                }
-            }
-
-
-        } catch (SAXException e) {
-
-            if(Extractor.DEBUG){
-                System.out.println("XMLParser");
-                e.printStackTrace();
-            }
-        } catch (IOException e) {
-            if(Extractor.DEBUG){
-                System.out.println("XMLParser");
-                e.printStackTrace();
-            }
-        } catch (ParserConfigurationException e) {
-            if(Extractor.DEBUG){
-                System.out.println("XMLParser");
-                e.printStackTrace();
-            }
-        }
-        */
     }
 
     /**

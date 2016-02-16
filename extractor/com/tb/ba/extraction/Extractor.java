@@ -60,7 +60,7 @@ public class Extractor {
         methods = new ArrayList<>();
 //        methods.add(new ExtractNormal());
 //        methods.add(new ExtractAbstract());
-//        methods.add(new ExtractNoTemplate());
+        methods.add(new ExtractNoTemplate());
 //        methods.add(new ExtractNoLinksInInfobox());
 //        methods.add(new ExtractInfobox());
         methods.add(new ExtractRelativePosition());
@@ -86,6 +86,10 @@ public class Extractor {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+        
+        for (ExtractionMethod method : Extractor.methods) {
+            method.closeWriter();
+        }
 
 //        WatchdogThread watchdogThread = new WatchdogThread();
 //        new Thread(watchdogThread).start();

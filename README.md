@@ -13,6 +13,8 @@ Extrahiert Seiten-Links aus Wikipedia auf verschiedenen Wegen.
 Weiterhin wird Apache Commons Compress™ benötigt.
 Quelle: https://commons.apache.org/proper/commons-compress/
 
+Jsoup http://jsoup.org/
+
 
 -Für die Tools:
 Für das Tool PGrep wird die JAVA ASCII Table benötigt. Diese ist unter https://code.google.com/p/java-ascii-table/ zu finden.

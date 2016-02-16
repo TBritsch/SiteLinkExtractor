@@ -2,13 +2,11 @@ package com.tb.ba.extraction.methods;
 
 import com.tb.ba.extraction.Extractor;
 import com.tb.ba.extraction.datastructure.Article;
-import com.tb.ba.extraction.datastructure.Link;
 import com.tb.ba.extraction.writer.TupleElement;
 
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
@@ -88,6 +86,4 @@ public abstract class ExtractionMethod {
     public void closeWriter(){
         writer.close();
     }
-
-
 }
