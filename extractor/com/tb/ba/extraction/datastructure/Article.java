@@ -341,7 +341,14 @@ public class Article {
         // Templates
         ArrayList<Template> templates = new ArrayList<>(); //Speichert die Templates, die extrahiert werden
         Stack<Occurrence> stack = new Stack<>(); //Kellerspeicher, der die geöffneten Templates speichert
-
+        
+        // kind of a dirty fix to a bug that ocurrs with {{{{ and }}}}
+        while (wikitext.contains("{{{{")) {
+        	wikitext = wikitext.replaceAll("\\{\\{\\{\\{", "\\{\\{ \\{\\{");
+        }
+        while (wikitext.contains("}}}}")) {
+        	wikitext = wikitext.replaceAll("\\}\\}\\}\\}", "\\}\\} \\}\\}");
+        }        
 
         int indexOpen = this.wikitext.indexOf("{{");
         int indexOpenOld = -2;  //speichert den zuletzt gültigen Wert
@@ -501,10 +508,10 @@ public class Article {
         return templates;
     }
 
-//    public int getNamspace() {
-//        return namspace;
-//    }
-//
+    public int getNamspace() {
+        return namspace;
+    }
+
 //    /**
 //     * Setzt den Namespace des Artikels.
 //     *

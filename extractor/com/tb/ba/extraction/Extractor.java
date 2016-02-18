@@ -39,7 +39,7 @@ public class Extractor {
      */
     public static void main(String[] args) {
         if (args.length != 2) {
-            System.out.println("Wrong Parameters!");
+            System.out.println("Wrong Parameters! Provide 'lang filename'");
             System.exit(0);
         }
 
@@ -58,11 +58,11 @@ public class Extractor {
 
 
         methods = new ArrayList<>();
-//        methods.add(new ExtractNormal());
-//        methods.add(new ExtractAbstract());
+        methods.add(new ExtractNormal());
+        methods.add(new ExtractAbstract());
         methods.add(new ExtractNoTemplate());
 //        methods.add(new ExtractNoLinksInInfobox());
-//        methods.add(new ExtractInfobox());
+        methods.add(new ExtractInfobox());
         methods.add(new ExtractRelativePosition());
 
 
