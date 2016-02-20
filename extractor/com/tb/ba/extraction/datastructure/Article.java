@@ -7,6 +7,7 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.nodes.Node;
+import org.jsoup.nodes.TextNode;
 import org.jsoup.parser.Parser;
 import org.jsoup.select.Elements;
 
@@ -30,7 +31,7 @@ public class Article {
      * Maximale Länge eine Abstracts
      */
     public static final int CONFIG_MAX_ABSTRACT_LENGTH = 500;
-    public static final int CONFIG_MAX_FILELINK_LENGT = 400;
+    public static final int CONFIG_MAX_FILELINK_LENGTH = 400;
 
 
     private HashMap<Integer, Template> templates = new HashMap<>();
@@ -54,8 +55,9 @@ public class Article {
         this.title = title;
         this.namspace = namespace;
         if (namespace == 0) {
-            //System.out.print("title: " + title + ":");
-
+        	// transform escaped html (&lt;) to normal html (<)
+        	wikitext = TextNode.createFromEncoded(wikitext, null).getWholeText();
+        	
             this.wikitext = removeRefs(wikitext);
             this.handleTemplates();
             this.tokenize();
@@ -121,7 +123,7 @@ public class Article {
                     boolean running = true;
                     while (running) {
                         int nextOcc = Math.min(str.indexOf("[[", indexOpen + 2), str.indexOf("]]", indexOpen + 2));
-                        nextOcc = Math.min(nextOcc, indexOpen + CONFIG_MAX_FILELINK_LENGT);
+                        nextOcc = Math.min(nextOcc, indexOpen + CONFIG_MAX_FILELINK_LENGTH);
                         int max;
                         if (nextOcc < 0) {
                             max = str.length();
@@ -174,7 +176,7 @@ public class Article {
                         } else {
                             end = str.length();
                         }
-                        end = Math.min(end, indexOpen + CONFIG_MAX_FILELINK_LENGT);
+                        end = Math.min(end, indexOpen + CONFIG_MAX_FILELINK_LENGTH);
                         linktext = str.substring(Math.min(indexOpen + 2, str.length()), end);
                         if (!linktext.equals("|")) {
                             link_array = linktext.split(Pattern.quote("|"));
